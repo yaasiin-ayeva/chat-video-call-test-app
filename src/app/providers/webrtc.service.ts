@@ -52,41 +52,56 @@ export class WebrtcService {
   async createPeer(userId: string) {
     this.peer = new Peer(userId);
     this.peer.on('open', () => {
-      this.wait();
+      this.wait(userId);
+    });
+
+    this.peer.on('close', () => {
+      console.log('Peer connection closed');
+      if (this.mediaStream) {
+        this.mediaStream.getTracks().forEach((track) => track.stop());
+      }
     });
   }
 
   call(partnerId: string) {
     this.partnerId = partnerId;
-    console.log(this.peer.destroyed);
 
     if (this.peer.destroyed) {
       this.createPeer(this.userId);
     }
 
-    const call = this.peer.call(partnerId, this.mediaStream);
-    this.mediaConnection = call; // Save reference to the `mediaConnection` object
-    
-    if (call) {
+    // const call = this.peer.call(partnerId, this.mediaStream);
+    // this.mediaConnection = call;
+
+    this.mediaConnection = this.peer.call(partnerId, this.mediaStream);
+
+    if (this.mediaConnection) {
       this.connected = true;
     }
 
-    call.on('stream', (stream) => {
+    this.mediaConnection.on('stream', (stream) => {
       this.partnerMediaElement.srcObject = stream;
-      this.hideCall = true;
-      this.connected = false;
-      this.hideCallLogin = false;
+      this.hideCall = false;
+      this.connected = true;
+      this.hideCallLogin = true;
     });
   }
 
-  wait() {
+  wait(userId: any) {
     this.peer.on('call', (call) => {
 
-      this.mediaConnection = call; // Save reference to the `mediaConnection` object
-      var acceptsCall = confirm("Videocall incoming, do you want to accept it ?");
+
+      console.log("this.mediaConnection A", this.mediaConnection);
+      
+
+      this.mediaConnection = call;
+
+      console.log("this.mediaConnection B", this.mediaConnection);
+
+      var acceptsCall = confirm(`Incomming call from ${userId}, Accept this call ?`);
       if (acceptsCall) {
-        call.answer(this.mediaStream); // Answer the call with an A/V stream.
-        call.on('stream', (stream) => {
+        this.mediaConnection.answer(this.mediaStream); // Answer the call with an A/V stream.
+        this.mediaConnection.on('stream', (stream) => {
           this.partnerMediaElement.srcObject = stream;
           this.connected = true;
           console.log('Connected', this.connected);
@@ -118,7 +133,16 @@ export class WebrtcService {
   }
 
   hangUp() {
-    this.mediaConnection.close();
-    this.partnerMediaElement = new HTMLMediaElement();
+    // if (this.mediaConnection) {
+    //   this.mediaConnection.close();
+    //   this.partnerMediaElement.srcObject = null;
+    //   // this.mediaStream.getVideoTracks().forEach(track => {
+    //   //   track.stop();
+    //   // });
+    //   // this.mediaStream.getTracks().forEach(track => track.stop());
+    // } else {
+    //   console.log('mediacon not available');
+    // }
+    this.peer.destroy();
   }
 }
