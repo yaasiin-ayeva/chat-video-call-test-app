@@ -1,0 +1,7 @@
+{
+  "name": "chat-video-call-test-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
