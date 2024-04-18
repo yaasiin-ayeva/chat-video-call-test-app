@@ -9,13 +9,21 @@ npm i
 ```
 
 2. Finally Run : 
+
+```bash
+npm start
+```
+
+or if you have ionic cli installed on your machine then
+
+
 ```bash
 ionic serve --host [YOUR_IP_ADDRESS] --ssl
 ```
 
-3. You can test the app inside two browsers or two tabs in the same browser. Try to access this link
+3. You can test the app among two browsers. Try to access this link
 ```bash
-https://[YOUR_API_ADDRESS]:[SERVER_PORT]/home
+https://[YOUR_API_ADDRESS]:[SERVER_PORT]
 ```
 
 ## Important !
