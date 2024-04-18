@@ -17,7 +17,7 @@ export class WebrtcService {
 
   userId!: string;
 
-  stun = 'stun.l.google.com:19302'; // Utilisation des STUN de Google
+  stun = 'stun.l.google.com:19302';
   mediaConnection!: MediaConnection;
   options: PeerJSOption;
 
@@ -49,7 +49,7 @@ export class WebrtcService {
   }
 
   async createPeer(userId: string) {
-    this.peer = new Peer(userId, { // Spécifiez le serveur STUN ici
+    this.peer = new Peer(userId, {
       config: {
         iceServers: [this.stunServer]
       }
@@ -92,7 +92,7 @@ export class WebrtcService {
       this.mediaConnection = call;
       var acceptsCall = confirm(`Incomming call from ${userId}, Accept this call ?`);
       if (acceptsCall) {
-        this.mediaConnection.answer(this.mediaStream); // Answer the call with an A/V stream.
+        this.mediaConnection.answer(this.mediaStream);
         this.mediaConnection.on('stream', (stream) => {
           this.partnerMediaElement.srcObject = stream;
           this.connected = true;
