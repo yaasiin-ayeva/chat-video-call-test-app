@@ -17,8 +17,7 @@ export class WebrtcService {
 
   userId!: string;
 
-
-  stun = 'stun.l.google.com:19302';
+  stun = 'stun.l.google.com:19302'; // Utilisation des STUN de Google
   mediaConnection!: MediaConnection;
   options: PeerJSOption;
 
@@ -27,7 +26,7 @@ export class WebrtcService {
   };
 
   constructor() {
-    this.options = {  // not used, by default it'll use peerjs server
+    this.options = {
       key: 'cd1ft79ro8g833di',
       debug: 3
     };
@@ -50,7 +49,11 @@ export class WebrtcService {
   }
 
   async createPeer(userId: string) {
-    this.peer = new Peer(userId);
+    this.peer = new Peer(userId, { // Spécifiez le serveur STUN ici
+      config: {
+        iceServers: [this.stunServer]
+      }
+    });
     this.peer.on('open', () => {
       this.wait(userId);
     });
@@ -70,9 +73,6 @@ export class WebrtcService {
       this.createPeer(this.userId);
     }
 
-    // const call = this.peer.call(partnerId, this.mediaStream);
-    // this.mediaConnection = call;
-
     this.mediaConnection = this.peer.call(partnerId, this.mediaStream);
 
     if (this.mediaConnection) {
@@ -89,15 +89,7 @@ export class WebrtcService {
 
   wait(userId: any) {
     this.peer.on('call', (call) => {
-
-
-      console.log("this.mediaConnection A", this.mediaConnection);
-      
-
       this.mediaConnection = call;
-
-      console.log("this.mediaConnection B", this.mediaConnection);
-
       var acceptsCall = confirm(`Incomming call from ${userId}, Accept this call ?`);
       if (acceptsCall) {
         this.mediaConnection.answer(this.mediaStream); // Answer the call with an A/V stream.
@@ -133,16 +125,6 @@ export class WebrtcService {
   }
 
   hangUp() {
-    // if (this.mediaConnection) {
-    //   this.mediaConnection.close();
-    //   this.partnerMediaElement.srcObject = null;
-    //   // this.mediaStream.getVideoTracks().forEach(track => {
-    //   //   track.stop();
-    //   // });
-    //   // this.mediaStream.getTracks().forEach(track => track.stop());
-    // } else {
-    //   console.log('mediacon not available');
-    // }
     this.peer.destroy();
   }
 }
