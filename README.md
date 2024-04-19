@@ -1,5 +1,5 @@
-# chat-video-call-test-app
-Simple IONIC Audio/Video Call and Chat app using peerJS (WebRTC) to test rtc implementation
+# rtc-video-call
+Simple IONIC Audio/Video Call app using peerJS (WebRTC) to test rtc implementation
 
 # Steps to run this project:
 
